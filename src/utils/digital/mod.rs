@@ -87,8 +87,33 @@ where
     current_idx += 1;
   }
 
-  exhaust_addition_remainder(&mut result, lhs, current_idx, &mut carry, base);
-  exhaust_addition_remainder(&mut result, rhs, current_idx, &mut carry, base);
+  while current_idx < left_magnitude {
+    let current_left = lhs[current_idx];
+    let current_carry = if carry { I::one() } else { I::zero() };
+    let after_carry = wrapping_add(current_left, current_carry, base);
+
+    carry = after_carry < current_left;
+
+    result.push(after_carry);
+
+    current_idx += 1;
+  }
+
+  while current_idx < right_magnitude {
+    let current_right = rhs[current_idx];
+    let current_carry = if carry { I::one() } else { I::zero() };
+    let after_carry = wrapping_add(current_right, current_carry, base);
+
+    carry = after_carry < current_right;
+
+    result.push(after_carry);
+
+    current_idx += 1;
+  }
+
+  if carry {
+    result.push(I::one());
+  }
 
   result
 }
@@ -154,33 +179,6 @@ where
   }
 
   (result, sign)
-}
-
-#[inline(always)]
-fn exhaust_addition_remainder<I>(
-  result: &mut Vec<I>,
-  remaining_digits: &[I],
-  mut current_idx: usize,
-  carry: &mut bool,
-  base: DigitalWrap,
-) where
-  I: Integer + Unsigned + Bounded + FromPrimitive + Copy + Debug,
-{
-  let remainder_magnitude = remaining_digits.len();
-  while current_idx < remainder_magnitude {
-    let current_val = remaining_digits[current_idx];
-    let current_carry = if *carry { I::one() } else { I::zero() };
-    let current_result = wrapping_add(current_val, current_carry, base);
-    *carry = current_result <= current_val;
-    result.push(current_result);
-    current_idx += 1;
-  }
-
-  if *carry {
-    result.push(I::one());
-  }
-
-  *carry = false;
 }
 
 #[inline(always)]
