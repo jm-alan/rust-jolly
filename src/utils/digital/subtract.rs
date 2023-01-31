@@ -64,7 +64,7 @@ where
     current_idx += 1;
   }
 
-  (result, sign)
+  (trim_leading_zeroes(&result), sign)
 }
 
 #[inline(always)]
