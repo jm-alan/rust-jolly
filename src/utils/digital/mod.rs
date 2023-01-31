@@ -51,6 +51,10 @@ where
   }
 }
 
+// [8, 3, 5, 0, 6, 2, 8, 1, 0, 7, 1, 4] +
+// [0, 5, 2, 0, 4, 7, 5, 3, 1, 0, 1, 5]
+// [8, 8, 7, 0, 0, 0, 4, 5, 1, 7, 2, 9]
+
 #[inline(always)]
 pub fn digital_add<I>(lhs: &[I], rhs: &[I], base: DigitalWrap) -> Vec<I>
 where
@@ -74,13 +78,11 @@ where
     let current_left = lhs[current_idx];
     let current_right = rhs[current_idx];
     let current_carry = if carry { I::one() } else { I::zero() };
-    let mut current_result = wrapping_add(current_left, current_right, base);
+    let before_carry = wrapping_add(current_left, current_right, base);
+    let after_carry = wrapping_add(before_carry, current_carry, base);
+    carry = before_carry < current_left || after_carry < before_carry;
 
-    carry = current_result < current_left;
-
-    current_result = wrapping_add(current_result, current_carry, base);
-
-    result.push(current_result);
+    result.push(after_carry);
 
     current_idx += 1;
   }
