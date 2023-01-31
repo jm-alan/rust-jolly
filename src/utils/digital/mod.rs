@@ -87,24 +87,20 @@ where
     current_idx += 1;
   }
 
-  while current_idx < left_magnitude {
-    let current_left = lhs[current_idx];
+  let remainder = if current_idx < left_magnitude {
+    lhs
+  } else {
+    rhs
+  };
+
+  let remainder_magnitude = remainder.len();
+
+  while current_idx < remainder_magnitude {
+    let current_left = remainder[current_idx];
     let current_carry = if carry { I::one() } else { I::zero() };
     let after_carry = wrapping_add(current_left, current_carry, base);
 
     carry = after_carry < current_left;
-
-    result.push(after_carry);
-
-    current_idx += 1;
-  }
-
-  while current_idx < right_magnitude {
-    let current_right = rhs[current_idx];
-    let current_carry = if carry { I::one() } else { I::zero() };
-    let after_carry = wrapping_add(current_right, current_carry, base);
-
-    carry = after_carry < current_right;
 
     result.push(after_carry);
 
