@@ -6,10 +6,20 @@ pub fn digital_cmp<I>(lhs: &[I], rhs: &[I]) -> Ordering
 where
   I: Integer + Unsigned + Bounded + FromPrimitive + Copy + Debug,
 {
-  match lhs.len().cmp(&rhs.len()) {
+  let mut left_magnitude = lhs.len();
+  let mut right_magnitude = rhs.len();
+
+  while left_magnitude > 0 && lhs[left_magnitude - 1].is_zero() {
+    left_magnitude -= 1;
+  }
+  while right_magnitude > 0 && rhs[right_magnitude - 1].is_zero() {
+    right_magnitude -= 1;
+  }
+
+  match left_magnitude.cmp(&right_magnitude) {
     Ordering::Equal => {
-      for (idx, el) in lhs.iter().enumerate().rev() {
-        match el.cmp(&rhs[idx]) {
+      for current_idx in (0..left_magnitude).rev() {
+        match lhs[current_idx].cmp(&rhs[current_idx]) {
           Ordering::Equal => continue,
           ord => return ord,
         }
