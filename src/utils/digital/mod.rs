@@ -5,7 +5,10 @@ mod subtract;
 mod wrap;
 
 pub use self::{
-  add::digital_add, cmp::digital_cmp, sign::Sign, subtract::digital_subtract,
+  add::{digital_add, digital_add_in_place},
+  cmp::digital_cmp,
+  sign::Sign,
+  subtract::digital_subtract,
   wrap::DigitalWrap,
 };
 

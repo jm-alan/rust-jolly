@@ -12,6 +12,8 @@ pub struct BigInt {
 
 const U64_MAX_DIGITS: [u8; 20] =
   [5, 1, 6, 1, 5, 5, 9, 0, 7, 3, 7, 0, 4, 4, 7, 6, 4, 4, 8, 1];
+const U64_MAX_PLUS_ONE_DIGITS: [u8; 20] =
+  [6, 1, 6, 1, 5, 5, 9, 0, 7, 3, 7, 0, 4, 4, 7, 6, 4, 4, 8, 1];
 
 impl BigInt {
   pub fn new(init: i64) -> Self {
@@ -56,7 +58,12 @@ impl BigInt {
   }
 
   #[inline(always)]
-  const fn u64_max_digits() -> [u8; 20] {
+  pub const fn u64_max_digits() -> [u8; 20] {
     U64_MAX_DIGITS
+  }
+
+  #[inline(always)]
+  pub const fn u64_max_plus_one() -> [u8; 20] {
+    U64_MAX_PLUS_ONE_DIGITS
   }
 }
