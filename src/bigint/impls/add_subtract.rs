@@ -8,7 +8,7 @@ use crate::{
 impl BigInt {
   #[inline(always)]
   fn digital_add_assign(&mut self, other: &[u64]) {
-    self.digits = digital_add(&self.digits, other, DigitalWrap::Max);
+    digital_add_in_place(&mut self.digits, other, DigitalWrap::Max);
   }
 
   #[inline(always)]
