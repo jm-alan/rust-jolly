@@ -2,7 +2,9 @@ use std::ops::{Add, AddAssign};
 
 use crate::{
   bigint::BigInt,
-  utils::{digital_add, digital_subtract, DigitalWrap, Sign},
+  utils::{
+    digital_add, digital_add_in_place, digital_subtract, DigitalWrap, Sign,
+  },
 };
 
 impl BigInt {
@@ -61,6 +63,7 @@ impl BigInt {
 impl Add for &BigInt {
   type Output = BigInt;
 
+  #[inline(always)]
   fn add(self, rhs: Self) -> Self::Output {
     match (self.sign, rhs.sign) {
       (_, Sign::Zero) => self.to_owned(),
@@ -78,12 +81,14 @@ impl Add for &BigInt {
 impl Add<u64> for &BigInt {
   type Output = BigInt;
 
+  #[inline(always)]
   fn add(self, rhs: u64) -> Self::Output {
     self.digital_add(&[rhs])
   }
 }
 
 impl AddAssign<u64> for BigInt {
+  #[inline(always)]
   fn add_assign(&mut self, rhs: u64) {
     self.digital_add_assign(&[rhs])
   }
