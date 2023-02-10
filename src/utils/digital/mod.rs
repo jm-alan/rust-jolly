@@ -1,5 +1,6 @@
 mod add;
 mod cmp;
+mod multiply;
 mod sign;
 mod subtract;
 mod wrap;
@@ -7,6 +8,7 @@ mod wrap;
 pub use self::{
   add::{digital_add, digital_add_in_place},
   cmp::digital_cmp,
+  multiply::digital_scalar_multiply_in_place_u32,
   sign::Sign,
   subtract::digital_subtract,
   wrap::DigitalWrap,
