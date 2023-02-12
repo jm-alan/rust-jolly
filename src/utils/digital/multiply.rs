@@ -27,3 +27,15 @@ fn fit_shift(val: u64, target: &mut u32) -> u32 {
     (val >> 32) as u32
   }
 }
+
+impl Mul for Sign {
+  type Output = Self;
+
+  fn mul(self, rhs: Self) -> Self::Output {
+    match rhs {
+      Sign::Negative => self.negate(),
+      Sign::Zero => Sign::Zero,
+      _ => self,
+    }
+  }
+}
