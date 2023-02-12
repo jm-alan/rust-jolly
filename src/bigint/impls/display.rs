@@ -5,9 +5,10 @@ use crate::{
   utils::{digital_add_in_place, digital_subtract, Digital, DigitalWrap, Sign},
 };
 
-const UINT_MAX_PLUS_ONE: [u64; 2] = [0, 1];
+const UINT_MAX_PLUS_ONE: [u32; 2] = [0, 1];
 
 impl Display for BigInt {
+  #[inline(always)]
   fn fmt(&self, formatter: &mut Formatter<'_>) -> FmtResult {
     if self.magnitude() == 1 {
       write!(formatter, "{}", self.digits[0])
@@ -22,7 +23,7 @@ impl Display for BigInt {
 
         digital_add_in_place(
           &mut result,
-          &BigInt::u64_max_plus_one(),
+          &BigInt::u32_max_plus_one(),
           DigitalWrap::Ten,
         );
 

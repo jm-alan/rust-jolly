@@ -7,26 +7,14 @@ pub mod impls;
 #[derive(Debug, Clone)]
 pub struct BigInt {
   sign: Sign,
-  digits: Vec<u64>,
+  pub digits: Vec<u32>,
 }
 
-const U64_MAX_DIGITS: [u8; 20] =
-  [5, 1, 6, 1, 5, 5, 9, 0, 7, 3, 7, 0, 4, 4, 7, 6, 4, 4, 8, 1];
-const U64_MAX_PLUS_ONE_DIGITS: [u8; 20] =
-  [6, 1, 6, 1, 5, 5, 9, 0, 7, 3, 7, 0, 4, 4, 7, 6, 4, 4, 8, 1];
+const U32_MAX_DIGITS: [u8; 10] = [5, 9, 2, 7, 6, 9, 4, 9, 2, 4];
+const U32_MAX_PLUS_ONE_DIGITS: [u8; 10] = [6, 9, 2, 7, 6, 9, 4, 9, 2, 4];
 
 impl BigInt {
-  pub fn new(init: i64) -> Self {
-    Self {
-      sign: match init.cmp(&0) {
-        Ordering::Equal => Sign::Zero,
-        Ordering::Greater => Sign::Positive,
-        Ordering::Less => Sign::Negative,
-      },
-      digits: vec![init.unsigned_abs()],
-    }
-  }
-
+  #[inline(always)]
   pub fn zero() -> Self {
     Self::default()
   }
@@ -58,12 +46,12 @@ impl BigInt {
   }
 
   #[inline(always)]
-  pub const fn u64_max_digits() -> [u8; 20] {
-    U64_MAX_DIGITS
+  pub const fn u32_max_digits() -> [u8; 10] {
+    U32_MAX_DIGITS
   }
 
   #[inline(always)]
-  pub const fn u64_max_plus_one() -> [u8; 20] {
-    U64_MAX_PLUS_ONE_DIGITS
+  pub const fn u32_max_plus_one() -> [u8; 10] {
+    U32_MAX_PLUS_ONE_DIGITS
   }
 }

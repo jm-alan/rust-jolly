@@ -9,12 +9,12 @@ use crate::{
 
 impl BigInt {
   #[inline(always)]
-  fn digital_add_assign(&mut self, other: &[u64]) {
+  fn digital_add_assign(&mut self, other: &[u32]) {
     digital_add_in_place(&mut self.digits, other, DigitalWrap::Max);
   }
 
   #[inline(always)]
-  fn digital_subtract_assign(&mut self, other: &[u64]) {
+  fn digital_subtract_assign(&mut self, other: &[u32]) {
     let (digits, sign) =
       digital_subtract(&self.digits, other, DigitalWrap::Max);
 
@@ -27,7 +27,7 @@ impl BigInt {
   }
 
   #[inline(always)]
-  fn digital_add(&self, other: &[u64]) -> Self {
+  fn digital_add(&self, other: &[u32]) -> Self {
     Self {
       sign: self.sign,
       digits: digital_add(&self.digits, other, DigitalWrap::Max),
@@ -35,7 +35,7 @@ impl BigInt {
   }
 
   #[inline(always)]
-  fn digital_subtract(&self, other: &[u64]) -> Self {
+  fn digital_subtract(&self, other: &[u32]) -> Self {
     let (digits, sign) =
       digital_subtract(&self.digits, other, DigitalWrap::Max);
 
@@ -78,18 +78,18 @@ impl Add for &BigInt {
   }
 }
 
-impl Add<u64> for &BigInt {
+impl Add<u32> for &BigInt {
   type Output = BigInt;
 
   #[inline(always)]
-  fn add(self, rhs: u64) -> Self::Output {
+  fn add(self, rhs: u32) -> Self::Output {
     self.digital_add(&[rhs])
   }
 }
 
-impl AddAssign<u64> for BigInt {
+impl AddAssign<u32> for BigInt {
   #[inline(always)]
-  fn add_assign(&mut self, rhs: u64) {
+  fn add_assign(&mut self, rhs: u32) {
     self.digital_add_assign(&[rhs])
   }
 }
