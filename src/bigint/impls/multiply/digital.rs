@@ -47,3 +47,21 @@ impl MulAssign<&BigInt> for BigInt {
     self.digits = result;
   }
 }
+
+impl BigInt {
+  #[inline(always)]
+  pub fn pow(&self, rhs: u64) -> Self {
+    let mut result = self.clone();
+
+    result.pow_assign(rhs);
+
+    result
+  }
+
+  #[inline(always)]
+  pub fn pow_assign(&mut self, rhs: u64) {
+    for _ in 1..rhs {
+      *self *= &rhs.into();
+    }
+  }
+}
