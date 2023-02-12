@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign};
+use std::ops::{Add, AddAssign, Sub, SubAssign};
 
 use crate::{
   bigint::BigInt,
@@ -15,14 +15,14 @@ impl BigInt {
 
   #[inline(always)]
   fn digital_subtract_assign(&mut self, other: &[u32]) {
-    let (digits, sign) =
+    let (difference, diff_sign) =
       digital_subtract(&self.digits, other, DigitalWrap::Max);
 
-    self.digits = digits;
-    self.sign = if sign == Sign::Negative {
-      sign.negate()
+    self.digits = difference;
+    self.sign = if diff_sign == Sign::Negative {
+      diff_sign.negate()
     } else {
-      sign
+      diff_sign
     };
   }
 
@@ -36,17 +36,11 @@ impl BigInt {
 
   #[inline(always)]
   fn digital_subtract(&self, other: &[u32]) -> Self {
-    let (digits, sign) =
-      digital_subtract(&self.digits, other, DigitalWrap::Max);
+    let mut result = self.clone();
 
-    Self {
-      sign: if sign == Sign::Negative {
-        sign.negate()
-      } else {
-        sign
-      },
-      digits,
-    }
+    result.digital_subtract_assign(other);
+
+    result
   }
 
   #[inline(always)]
@@ -91,5 +85,39 @@ impl AddAssign<u32> for BigInt {
   #[inline(always)]
   fn add_assign(&mut self, rhs: u32) {
     self.digital_add_assign(&[rhs])
+  }
+}
+
+impl Sub for &BigInt {
+  type Output = BigInt;
+
+  #[inline(always)]
+  fn sub(self, rhs: Self) -> Self::Output {
+    match (self.sign, rhs.sign) {
+      (_, Sign::Zero) => self.to_owned(),
+      (Sign::Zero, _) => rhs.to_owned(),
+      (Sign::Positive, Sign::Positive) | (Sign::Negative, Sign::Negative) => {
+        self.digital_subtract(&rhs.digits)
+      }
+      (Sign::Positive, Sign::Negative) | (Sign::Negative, Sign::Positive) => {
+        self.digital_add(&rhs.digits)
+      }
+    }
+  }
+}
+
+impl Sub<u32> for &BigInt {
+  type Output = BigInt;
+
+  #[inline(always)]
+  fn sub(self, rhs: u32) -> Self::Output {
+    self.digital_subtract(&[rhs])
+  }
+}
+
+impl SubAssign<u32> for BigInt {
+  #[inline(always)]
+  fn sub_assign(&mut self, rhs: u32) {
+    self.digital_subtract_assign(&[rhs])
   }
 }
