@@ -1,5 +1,9 @@
+use std::ops::Mul;
+
+use super::Sign;
+
 #[inline(always)]
-pub fn digital_scalar_multiply_in_place_u32(lhs: &mut [u32], rhs: u32) -> u32 {
+pub fn digital_scalar_multiply_in_place_u32(lhs: &mut Vec<u32>, rhs: u32) {
   let mut carry = 0;
 
   for el in lhs.iter_mut() {
@@ -8,7 +12,9 @@ pub fn digital_scalar_multiply_in_place_u32(lhs: &mut [u32], rhs: u32) -> u32 {
     carry = after_fit;
   }
 
-  carry
+  if carry > 0 {
+    lhs.push(carry);
+  }
 }
 
 #[inline(always)]
