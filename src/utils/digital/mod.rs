@@ -1,5 +1,6 @@
 mod add;
 mod cmp;
+mod divide;
 mod multiply;
 mod sign;
 mod subtract;
