@@ -18,6 +18,21 @@ impl Sign {
       Negative => Positive,
     }
   }
+
+  #[inline(always)]
+  pub fn is_positive(self) -> bool {
+    self == Sign::Positive
+  }
+
+  #[inline(always)]
+  pub fn is_negative(self) -> bool {
+    self == Sign::Negative
+  }
+
+  #[inline(always)]
+  pub fn is_zero(self) -> bool {
+    self == Sign::Zero
+  }
 }
 
 impl PartialOrd for Sign {
