@@ -9,6 +9,7 @@ mod wrap;
 pub use self::{
   add::{digital_add, digital_add_in_place},
   cmp::digital_cmp,
+  divide::digital_scalar_divide_in_place_u32,
   multiply::digital_scalar_multiply_in_place_u32,
   sign::Sign,
   subtract::digital_subtract,
