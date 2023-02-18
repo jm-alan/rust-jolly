@@ -51,3 +51,30 @@ impl From<i64> for BigInt {
     Self { sign, digits }
   }
 }
+
+impl From<u32> for BigInt {
+  #[inline(always)]
+  fn from(value: u32) -> Self {
+    Self {
+      sign: match value.cmp(&0) {
+        Ordering::Equal => Sign::Zero,
+        _ => Sign::Positive,
+      },
+      digits: vec![value],
+    }
+  }
+}
+
+impl From<i32> for BigInt {
+  #[inline(always)]
+  fn from(value: i32) -> Self {
+    Self {
+      sign: match value.cmp(&0) {
+        Ordering::Equal => Sign::Zero,
+        Ordering::Greater => Sign::Positive,
+        Ordering::Less => Sign::Negative,
+      },
+      digits: vec![value.unsigned_abs()],
+    }
+  }
+}
