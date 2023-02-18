@@ -32,18 +32,6 @@ pub fn digital_scalar_divide_in_place_u32(lhs: &mut [u32], rhs: u32) -> u32 {
 }
 
 #[inline(always)]
-pub fn digital_scalar_divide_u32(lhs: &[u32], rhs: u32) -> (Vec<u32>, u32) {
-  let mut cloned = lhs.to_vec();
-  let rem = digital_scalar_divide_in_place_u32(&mut cloned, rhs);
-  (cloned, rem)
-}
-
-#[inline(always)]
-pub fn digital_scalar_rem_u32(lhs: &[u32], rhs: u32) -> u32 {
-  digital_scalar_divide_in_place_u32(&mut lhs.to_vec(), rhs)
-}
-
-#[inline(always)]
 fn digital_u64_u32_divide_with_rem(lhs: &[u32], rhs: u32) -> (u64, u32) {
   let combined = match lhs.len() {
     1 => lhs[0] as u64,
@@ -53,4 +41,16 @@ fn digital_u64_u32_divide_with_rem(lhs: &[u32], rhs: u32) -> (u64, u32) {
   let cast_divisor = rhs as u64;
   let (quot, rem) = (combined / cast_divisor, combined % cast_divisor);
   (quot, rem as u32)
+}
+
+#[inline(always)]
+pub fn digital_scalar_divide_u32(lhs: &[u32], rhs: u32) -> (Vec<u32>, u32) {
+  let mut cloned = lhs.to_vec();
+  let rem = digital_scalar_divide_in_place_u32(&mut cloned, rhs);
+  (cloned, rem)
+}
+
+#[inline(always)]
+pub fn digital_scalar_rem_u32(lhs: &[u32], rhs: u32) -> u32 {
+  digital_scalar_divide_in_place_u32(&mut lhs.to_vec(), rhs)
 }
