@@ -43,8 +43,10 @@ impl BigInt {
   #[inline(always)]
   pub fn trim_zeroes(&mut self) {
     let mut last_nonzero = self.digits.len() - 1;
-    while self.digits[last_nonzero] == 0 {
-      last_nonzero -= 1;
+    while self.digits[last_nonzero] == 0
+      && last_nonzero.wrapping_sub(1) != usize::MAX
+    {
+      last_nonzero = last_nonzero.wrapping_sub(1);
     }
     self.digits.truncate(last_nonzero + 1);
   }
