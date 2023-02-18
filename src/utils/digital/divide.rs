@@ -39,6 +39,11 @@ pub fn digital_scalar_divide_u32(lhs: &[u32], rhs: u32) -> (Vec<u32>, u32) {
 }
 
 #[inline(always)]
+pub fn digital_scalar_rem_u32(lhs: &[u32], rhs: u32) -> u32 {
+  digital_scalar_divide_in_place_u32(&mut lhs.to_vec(), rhs)
+}
+
+#[inline(always)]
 fn digital_u64_u32_divide_with_rem(lhs: &[u32], rhs: u32) -> (u64, u32) {
   let combined = match lhs.len() {
     1 => lhs[0] as u64,
