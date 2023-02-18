@@ -16,7 +16,7 @@ pub fn digital_scalar_divide_in_place_u32(lhs: &mut [u32], rhs: u32) -> u32 {
     let mut rem = 0;
     while digit_considering != usize::MAX {
       let (quot, current_rem) =
-        digital_u64_u32_divide_with_rem(&[lhs[digit_considering], rem], rhs);
+        digital_u64_u32_divide_with_rem([lhs[digit_considering], rem], rhs);
       rem = current_rem;
       match quot.cmp(&(u32::MAX as u64)) {
         Ordering::Greater => {
@@ -32,12 +32,8 @@ pub fn digital_scalar_divide_in_place_u32(lhs: &mut [u32], rhs: u32) -> u32 {
 }
 
 #[inline(always)]
-fn digital_u64_u32_divide_with_rem(lhs: &[u32], rhs: u32) -> (u64, u32) {
-  let combined = match lhs.len() {
-    1 => lhs[0] as u64,
-    2 => lhs[0] as u64 + ((lhs[1] as u64) << 32),
-    _ => panic!("Attempt to divide inordinatedly sized value as u64"),
-  };
+fn digital_u64_u32_divide_with_rem(lhs: [u32; 2], rhs: u32) -> (u64, u32) {
+  let combined = lhs[0] as u64 + ((lhs[1] as u64) << 32);
   let cast_divisor = rhs as u64;
   let (quot, rem) = (combined / cast_divisor, combined % cast_divisor);
   (quot, rem as u32)
