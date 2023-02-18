@@ -1,6 +1,6 @@
 use std::ops::Mul;
 
-use super::Sign;
+use super::{wrapping_add, DigitalWrap, Sign};
 
 #[inline(always)]
 pub fn digital_scalar_multiply_in_place_u32(lhs: &mut Vec<u32>, rhs: u32) {
@@ -8,8 +8,12 @@ pub fn digital_scalar_multiply_in_place_u32(lhs: &mut Vec<u32>, rhs: u32) {
 
   for el in lhs.iter_mut() {
     let after_fit = fit_shift(higher_order_multiply(*el, rhs), el);
-    *el += carry;
-    carry = after_fit;
+
+    let before_carry = *el;
+
+    *el = wrapping_add(*el, carry, DigitalWrap::Max);
+
+    carry = after_fit + (*el < before_carry) as u32;
   }
 
   if carry > 0 {
