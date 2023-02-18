@@ -51,7 +51,7 @@ impl MulAssign<&BigInt> for BigInt {
     }
 
     self.digits = result;
-    if rhs.sign == Sign::Negative {
+    if rhs.sign.is_negative() {
       self.sign = self.sign.negated();
     }
   }
