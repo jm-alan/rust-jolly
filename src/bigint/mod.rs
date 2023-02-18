@@ -20,6 +20,22 @@ impl BigInt {
   }
 
   #[inline(always)]
+  pub fn one() -> Self {
+    Self {
+      sign: Sign::Positive,
+      digits: vec![1],
+    }
+  }
+
+  #[inline(always)]
+  pub fn negative_one() -> Self {
+    Self {
+      sign: Sign::Negative,
+      digits: vec![1],
+    }
+  }
+
+  #[inline(always)]
   pub fn magnitude(&self) -> usize {
     self.digits.len()
   }
