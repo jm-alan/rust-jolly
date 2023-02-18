@@ -41,6 +41,19 @@ impl BigInt {
   }
 
   #[inline(always)]
+  pub fn fact(&self) -> Self {
+    let mut counter = self.clone();
+    let mut result = BigInt::from(1u64);
+
+    while !counter.is_zero() {
+      result *= &counter;
+      counter -= 1;
+    }
+
+    result
+  }
+
+  #[inline(always)]
   pub fn cmp_magnitude(&self, other: &Self) -> Ordering {
     usize::cmp(&self.magnitude(), &other.magnitude())
   }
