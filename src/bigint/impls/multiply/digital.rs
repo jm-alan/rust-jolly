@@ -4,7 +4,6 @@ use crate::{
   bigint::BigInt,
   utils::{
     digital_add_in_place, digital_scalar_multiply_in_place_u32, DigitalWrap,
-    Sign,
   },
 };
 
