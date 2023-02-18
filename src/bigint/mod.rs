@@ -46,6 +46,11 @@ impl BigInt {
   }
 
   #[inline(always)]
+  pub fn is_zero(&self) -> bool {
+    self.sign == Sign::Zero
+  }
+
+  #[inline(always)]
   pub const fn u32_max_digits() -> [u8; 10] {
     U32_MAX_DIGITS
   }
