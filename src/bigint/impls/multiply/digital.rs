@@ -4,6 +4,7 @@ use crate::{
   bigint::BigInt,
   utils::{
     digital_add_in_place, digital_scalar_multiply_in_place_u32, DigitalWrap,
+    Sign,
   },
 };
 
@@ -23,18 +24,23 @@ impl Mul for &BigInt {
 impl MulAssign<&BigInt> for BigInt {
   #[inline(always)]
   fn mul_assign(&mut self, rhs: &BigInt) {
-    let mut scaled_mult =
-      Vec::with_capacity(self.magnitude() + rhs.magnitude());
+    if rhs.is_zero() {
+      return self.zero_out();
+    }
+
+    let result_magnitude = self.magnitude() + rhs.magnitude();
+
+    let mut scaled_mult = Vec::with_capacity(result_magnitude);
     scaled_mult.extend(self.digits.iter().take(self.digits.len() - 1));
 
-    let mut result =
-      Vec::with_capacity(usize::max(self.magnitude(), rhs.magnitude()) + 1);
+    let mut result = Vec::with_capacity(result_magnitude);
     result.push(0);
 
     for (idx, digit) in rhs.digits.iter().enumerate() {
       for num in scaled_mult.iter_mut().take(idx) {
         *num = 0;
       }
+
       scaled_mult[idx..(idx + self.digits.len() - 1)]
         .copy_from_slice(&self.digits[0..(self.digits.len() - 1)]);
       scaled_mult.push(self.digits[self.digits.len() - 1]);
@@ -45,6 +51,9 @@ impl MulAssign<&BigInt> for BigInt {
     }
 
     self.digits = result;
+    if rhs.sign == Sign::Negative {
+      self.sign = self.sign.negated();
+    }
   }
 }
 
