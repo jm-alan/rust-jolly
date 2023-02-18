@@ -41,6 +41,15 @@ impl BigInt {
   }
 
   #[inline(always)]
+  pub fn trim_zeroes(&mut self) {
+    let mut last_nonzero = self.digits.len() - 1;
+    while self.digits[last_nonzero] == 0 {
+      last_nonzero -= 1;
+    }
+    self.digits.truncate(last_nonzero + 1);
+  }
+
+  #[inline(always)]
   pub fn fact(&self) -> Self {
     let mut counter = self.clone();
     let mut result = BigInt::from(1u64);
