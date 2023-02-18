@@ -27,7 +27,7 @@ impl Display for BigInt {
           DigitalWrap::Ten,
         );
 
-        if sign == Sign::Zero {
+        if sign.is_zero() {
           break;
         }
         digital_copy = difference;

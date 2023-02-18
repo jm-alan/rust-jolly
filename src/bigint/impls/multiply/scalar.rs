@@ -10,7 +10,7 @@ impl Mul<u32> for &BigInt {
 
   #[inline(always)]
   fn mul(self, rhs: u32) -> Self::Output {
-    if rhs == 0 || self.sign == Sign::Zero {
+    if rhs == 0 || self.is_zero() {
       BigInt::zero()
     } else {
       let mut result = self.clone();
