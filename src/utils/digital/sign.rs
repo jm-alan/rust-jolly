@@ -11,41 +11,39 @@ pub enum Sign {
 impl Sign {
   #[inline(always)]
   pub fn negated(&self) -> Self {
-    use Sign::{Negative, Positive, Zero};
     match self {
-      Zero => Zero,
-      Positive => Negative,
-      Negative => Positive,
+      Self::Zero => Self::Zero,
+      Self::Positive => Self::Negative,
+      Self::Negative => Self::Positive,
     }
   }
 
   #[inline(always)]
   pub fn is_positive(self) -> bool {
-    self == Sign::Positive
+    self == Self::Positive
   }
 
   #[inline(always)]
   pub fn is_negative(self) -> bool {
-    self == Sign::Negative
+    self == Self::Negative
   }
 
   #[inline(always)]
   pub fn is_zero(self) -> bool {
-    self == Sign::Zero
+    self == Self::Zero
   }
 }
 
 impl PartialOrd for Sign {
   #[inline(always)]
   fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-    use Sign::{Negative, Positive, Zero};
     match (self, other) {
-      (Positive, Zero) => Some(Ordering::Greater),
-      (Positive, Negative) => Some(Ordering::Greater),
-      (Zero, Negative) => Some(Ordering::Greater),
-      (Zero, Positive) => Some(Ordering::Less),
-      (Negative, Zero) => Some(Ordering::Less),
-      (Negative, Positive) => Some(Ordering::Greater),
+      (Self::Positive, Self::Zero) => Some(Ordering::Greater),
+      (Self::Positive, Self::Negative) => Some(Ordering::Greater),
+      (Self::Zero, Self::Negative) => Some(Ordering::Greater),
+      (Self::Zero, Self::Positive) => Some(Ordering::Less),
+      (Self::Negative, Self::Zero) => Some(Ordering::Less),
+      (Self::Negative, Self::Positive) => Some(Ordering::Greater),
       _ => Some(Ordering::Equal),
     }
   }
