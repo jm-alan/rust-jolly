@@ -1,7 +1,7 @@
 use crate::{
   bigint::BigInt,
   utils::{
-    digital_add, digital_add_in_place, digital_scalar_multiply_in_place_u32,
+    digital_add, digital_add_in_place, digital_scalar_divide_in_place_u32,
     digital_subtract, DigitalWrap, Sign,
   },
 };
@@ -175,4 +175,14 @@ fn test_factorial() {
   let hundo: BigInt = 100u64.into();
   let hundo_fact = hundo.fact();
   println!("{:?}", hundo_fact.digits);
+}
+
+#[test]
+fn test_division() {
+  let mut some_digits = vec![5, 10, 15, 20, 25];
+  let mut some_more_digits = vec![5, 10, 15, 20, 25];
+  digital_scalar_divide_in_place_u32(&mut some_digits, 5);
+  digital_scalar_divide_in_place_u32(&mut some_more_digits, 20);
+  println!("{:?}", some_digits);
+  println!("{:?}", some_more_digits);
 }
