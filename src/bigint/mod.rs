@@ -76,7 +76,7 @@ impl BigInt {
 
   #[inline(always)]
   pub fn is_zero(&self) -> bool {
-    self.sign == Sign::Zero
+    self.sign.is_zero()
   }
 
   #[inline(always)]
