@@ -1,22 +1,25 @@
 use crate::{
   bigint::BigInt,
   utils::{
-    digital_add, digital_add_in_place, digital_subtract, DigitalWrap, Sign,
+    digital_add, digital_add_in_place, digital_scalar_multiply_in_place_u32,
+    digital_subtract, DigitalWrap, Sign,
   },
 };
 
 #[test]
 fn test_addition() {
   let mut num = BigInt::zero();
-  num += u64::MAX;
-  println!("{num}");
-  num += 1;
-  println!("Decimal view: {num}, debug view: {:?}", num);
-  num += u64::MAX;
-  println!("{num}, {:?}", num);
-  for _ in 0..65354 {
-    num += u64::MAX;
+
+  for _ in 0..6005354 {
+    num += u32::MAX;
   }
+
+  // println!("{num}");
+}
+
+#[test]
+fn something() {
+  let num = u64::MAX << 1;
   println!("{num}");
 }
 
@@ -34,8 +37,8 @@ fn test_digital_add() {
   let left_u64_baseu64 = vec![u64::MAX];
   let right_u64_baseu64 = vec![1];
 
-  let big_left_u8_base10 = BigInt::u64_max_digits();
-  let big_right_u8_base10 = BigInt::u64_max_digits();
+  let big_left_u8_base10 = BigInt::u32_max_digits();
+  let big_right_u8_base10 = BigInt::u32_max_digits();
 
   let result_u8_base10 =
     digital_add(&left_u8_base10, &right_u8_base10, DigitalWrap::Ten);
@@ -52,10 +55,7 @@ fn test_digital_add() {
   assert_eq!(result_u8_base16, vec![8, 8, 8, 7, 1]);
   assert_eq!(result_u16_base65536, vec![43106, 24691, 43106, 24691]);
   assert_eq!(result_u64_baseu64, vec![0, 1]);
-  assert_eq!(
-    big_result_u8_base10,
-    vec![0, 3, 2, 3, 0, 1, 9, 1, 4, 7, 4, 1, 8, 8, 4, 3, 9, 8, 6, 3]
-  );
+  assert_eq!(big_result_u8_base10, vec![0, 9, 5, 4, 3, 9, 9, 8, 5, 8]);
 }
 
 #[test]
@@ -69,8 +69,8 @@ fn test_add_in_place() {
   let mut left_u16_base65536 = vec![54321, 12345, 54321, 12345u16];
   let right_u16_base65536 = vec![54321, 12345, 54321, 12345];
 
-  let mut big_left_u8_base10 = BigInt::u64_max_digits().to_vec();
-  let big_right_u8_base10 = BigInt::u64_max_digits();
+  let mut big_left_u8_base10 = BigInt::u32_max_digits().to_vec();
+  let big_right_u8_base10 = BigInt::u32_max_digits();
 
   digital_add_in_place(&mut left_u8_base10, &right_u8_base10, DigitalWrap::Ten);
   digital_add_in_place(
@@ -92,10 +92,7 @@ fn test_add_in_place() {
   assert_eq!(left_u8_base10, vec![9, 9, 9, 0, 1]);
   assert_eq!(left_u8_base16, vec![8, 8, 8, 7, 1]);
   assert_eq!(left_u16_base65536, vec![43106, 24691, 43106, 24691]);
-  assert_eq!(
-    big_left_u8_base10,
-    vec![0, 3, 2, 3, 0, 1, 9, 1, 4, 7, 4, 1, 8, 8, 4, 3, 9, 8, 6, 3]
-  );
+  assert_eq!(big_left_u8_base10, vec![0, 9, 5, 4, 3, 9, 9, 8, 5, 8]);
 }
 
 #[test]
@@ -141,4 +138,41 @@ fn test_digital_subtract() {
 
   assert_eq!(result_u16_base65536, vec![0]);
   assert_eq!(sign_u16_base65536, Sign::Zero);
+}
+
+#[test]
+fn test_bigint_scalar_multiply() {
+  let mut some_val = BigInt::from(1000u64);
+  some_val *= 3;
+  assert_eq!(format!("{some_val}"), "3000");
+}
+
+#[test]
+fn test_digital_scalar_multiply() {
+  let mut some_bigint = BigInt::zero();
+  some_bigint.digits = vec![u32::MAX / 5];
+
+  some_bigint *= 11u32;
+  println!("{some_bigint}");
+  println!("{:?}", some_bigint.digits);
+}
+
+#[test]
+fn test_bigint_bigint_multiply() {
+  let mut num_one = BigInt::zero();
+  let mut num_two = BigInt::zero();
+
+  num_one.digits = vec![20, 20];
+  num_two.digits = vec![30, 30, 30];
+
+  let num_three = &num_one * &num_two;
+
+  println!("{:?}", num_three.digits);
+}
+
+#[test]
+fn test_factorial() {
+  let hundo: BigInt = 100u64.into();
+  let hundo_fact = hundo.fact();
+  println!("{:?}", hundo_fact.digits);
 }
