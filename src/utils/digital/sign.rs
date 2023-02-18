@@ -9,6 +9,7 @@ pub enum Sign {
 }
 
 impl Sign {
+  #[inline(always)]
   pub fn negate(&self) -> Self {
     use Sign::{Negative, Positive, Zero};
     match self {
