@@ -2,7 +2,7 @@ use std::fmt::{Display, Formatter, Result as FmtResult};
 
 use crate::{
   bigint::BigInt,
-  utils::{digital_add_in_place, digital_subtract, Digital, DigitalWrap, Sign},
+  utils::{digital_add_in_place, digital_subtract, Digital, DigitalWrap},
 };
 
 const UINT_MAX_PLUS_ONE: [u32; 2] = [0, 1];
