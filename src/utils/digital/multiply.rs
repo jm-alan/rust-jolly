@@ -39,7 +39,7 @@ impl Mul for Sign {
 
   fn mul(self, rhs: Self) -> Self::Output {
     match rhs {
-      Sign::Negative => self.negate(),
+      Sign::Negative => self.negated(),
       Sign::Zero => Sign::Zero,
       _ => self,
     }
