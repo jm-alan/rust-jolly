@@ -10,6 +10,7 @@ use crate::{
 impl BigInt {
   #[inline(always)]
   fn digital_add_assign(&mut self, other: &[u32]) {
+    self.sign = Sign::Positive;
     digital_add_in_place(&mut self.digits, other, DigitalWrap::Max);
   }
 
@@ -29,7 +30,7 @@ impl BigInt {
   #[inline(always)]
   fn digital_add(&self, other: &[u32]) -> Self {
     Self {
-      sign: self.sign,
+      sign: Sign::Positive,
       digits: digital_add(&self.digits, other, DigitalWrap::Max),
     }
   }
@@ -77,13 +78,20 @@ impl Add<u32> for &BigInt {
 
   #[inline(always)]
   fn add(self, rhs: u32) -> Self::Output {
-    self.digital_add(&[rhs])
+    if rhs == 0 {
+      self.clone()
+    } else {
+      self.digital_add(&[rhs])
+    }
   }
 }
 
 impl AddAssign<u32> for BigInt {
   #[inline(always)]
   fn add_assign(&mut self, rhs: u32) {
+    if rhs == 0 {
+      return;
+    }
     self.digital_add_assign(&[rhs])
   }
 }

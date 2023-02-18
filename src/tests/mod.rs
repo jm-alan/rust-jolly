@@ -7,14 +7,14 @@ use crate::{
 };
 
 #[test]
-fn test_addition() {
+fn test_display() {
   let mut num = BigInt::zero();
 
-  for _ in 0..6005354 {
+  for _ in 0..65536 {
     num += u32::MAX;
   }
 
-  // println!("{num}");
+  println!("{num}");
 }
 
 #[test]

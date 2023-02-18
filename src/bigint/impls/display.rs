@@ -1,11 +1,6 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
-use crate::{
-  bigint::BigInt,
-  utils::{digital_add_in_place, digital_subtract, Digital, DigitalWrap},
-};
-
-const UINT_MAX_PLUS_ONE: [u32; 2] = [0, 1];
+use crate::bigint::BigInt;
 
 impl Display for BigInt {
   #[inline(always)]
@@ -13,24 +8,13 @@ impl Display for BigInt {
     if self.magnitude() == 1 {
       write!(formatter, "{}", self.digits[0])
     } else {
-      let mut digital_copy = self.digits.clone();
-      let mut result = digital_copy[0].as_digits();
-      digital_copy[0] = 0;
+      let mut cloned = self.clone();
 
-      loop {
-        let (difference, sign) =
-          digital_subtract(&digital_copy, &UINT_MAX_PLUS_ONE, DigitalWrap::Max);
+      let mut result = vec![];
 
-        digital_add_in_place(
-          &mut result,
-          &BigInt::u32_max_plus_one(),
-          DigitalWrap::Ten,
-        );
-
-        if sign.is_zero() {
-          break;
-        }
-        digital_copy = difference;
+      while !cloned.is_zero() {
+        result.push(&cloned % 10);
+        cloned /= 10;
       }
 
       let digits_as_string = result
