@@ -7,7 +7,7 @@ mod subtract;
 mod wrap;
 
 pub use self::{
-  add::{digital_add, digital_add_in_place},
+  add::{digital_add, digital_add_in_place, wrapping_add},
   cmp::digital_cmp,
   divide::{
     digital_scalar_divide_in_place_u32, digital_scalar_divide_u32,

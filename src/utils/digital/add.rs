@@ -125,7 +125,7 @@ where
 }
 
 #[inline(always)]
-fn wrapping_add<I>(lhs: I, rhs: I, base: DigitalWrap) -> I
+pub fn wrapping_add<I>(lhs: I, rhs: I, base: DigitalWrap) -> I
 where
   I: Integer + Unsigned + Bounded + FromPrimitive + Copy + Debug,
 {
