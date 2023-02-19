@@ -61,6 +61,13 @@ pub fn digital_scalar_multiply_in_place_u32(lhs: &mut Vec<u32>, rhs: u32) {
 }
 
 #[inline(always)]
+pub fn digital_scalar_multiply_u32(lhs: &[u32], rhs: u32) -> Vec<u32> {
+  let mut clone = lhs.to_vec();
+  digital_scalar_multiply_in_place_u32(&mut clone, rhs);
+  clone
+}
+
+#[inline(always)]
 fn higher_order_multiply(lhs: u32, rhs: u32) -> u64 {
   lhs as u64 * rhs as u64
 }
