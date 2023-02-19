@@ -6,12 +6,13 @@ pub mod impls;
 
 #[derive(Debug, Clone)]
 pub struct BigInt {
-  sign: Sign,
-  pub digits: Vec<u32>,
+  pub(crate) sign: Sign,
+  pub(crate) digits: Vec<u32>,
 }
 
 const U32_MAX_DIGITS: [u8; 10] = [5, 9, 2, 7, 6, 9, 4, 9, 2, 4];
 const U32_MAX_PLUS_ONE_DIGITS: [u8; 10] = [6, 9, 2, 7, 6, 9, 4, 9, 2, 4];
+const KARATSUBA_CROSSOVER: usize = 60;
 
 impl BigInt {
   #[inline(always)]
@@ -98,5 +99,10 @@ impl BigInt {
   #[inline(always)]
   pub const fn u32_max_plus_one() -> [u8; 10] {
     U32_MAX_PLUS_ONE_DIGITS
+  }
+
+  #[inline(always)]
+  pub const fn karatsuba_crossover() -> usize {
+    KARATSUBA_CROSSOVER
   }
 }
