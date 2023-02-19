@@ -13,7 +13,7 @@ pub use self::{
     digital_scalar_divide_in_place_u32, digital_scalar_divide_u32,
     digital_scalar_rem_u32,
   },
-  multiply::digital_scalar_multiply_in_place_u32,
+  multiply::{digital_scalar_multiply_in_place_u32, karatsuba_mul},
   sign::Sign,
   subtract::digital_subtract,
   wrap::DigitalWrap,
