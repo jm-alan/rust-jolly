@@ -95,3 +95,77 @@ impl Mul for Sign {
     }
   }
 }
+
+#[inline(always)]
+pub fn karatsuba_mul(lhs: &[u32], rhs: &[u32], crossover: usize) -> Vec<u32> {
+  match (lhs.len(), rhs.len()) {
+    (0, _) | (_, 0) | (1, _) | (_, 1) => digital_multiply_u32(lhs, rhs),
+    (left_magnitude, right_magnitude) => {
+      let should_k_recursive =
+        left_magnitude >= crossover && right_magnitude >= crossover;
+      let result_magnitude = left_magnitude + right_magnitude;
+      let mut result = Vec::with_capacity(result_magnitude);
+      let larger_magnitude = usize::max(left_magnitude, right_magnitude);
+      let half = larger_magnitude >> 1;
+      let a: Vec<u32> = lhs
+        .iter()
+        .copied()
+        .skip(half)
+        .take(lhs.len().wrapping_sub(half))
+        .collect();
+      let b: Vec<u32> = lhs.iter().copied().take(half).collect();
+      let c: Vec<u32> = rhs
+        .iter()
+        .copied()
+        .skip(half)
+        .take(rhs.len().wrapping_sub(half))
+        .collect();
+      let d: Vec<u32> = rhs.iter().copied().take(half).collect();
+
+      let mut ac = BigInt {
+        sign: Sign::Positive,
+        digits: if should_k_recursive {
+          karatsuba_mul(&a, &c, crossover)
+        } else {
+          digital_multiply_u32(&a, &c)
+        },
+      };
+
+      let bd = BigInt {
+        sign: Sign::Positive,
+        digits: if should_k_recursive {
+          karatsuba_mul(&b, &d, crossover)
+        } else {
+          digital_multiply_u32(&b, &d)
+        },
+      };
+
+      let k_ab_cd = BigInt {
+        sign: Sign::Positive,
+        digits: {
+          let sum_ab = digital_add(&a, &b, DigitalWrap::Max);
+          let sum_cd = digital_add(&c, &d, DigitalWrap::Max);
+          if should_k_recursive {
+            karatsuba_mul(&sum_ab, &sum_cd, crossover)
+          } else {
+            digital_multiply_u32(&sum_ab, &sum_cd)
+          }
+        },
+      };
+
+      let mut half_zeroes = vec![0; half];
+      let mut full_zeroes = vec![0; half * 2];
+
+      let mut ad_bc = &(&k_ab_cd - &ac) - &bd;
+
+      half_zeroes.append(&mut ad_bc.digits);
+      full_zeroes.append(&mut ac.digits);
+
+      result.extend(bd.digits);
+      digital_add_in_place(&mut result, &half_zeroes, DigitalWrap::Max);
+      digital_add_in_place(&mut result, &full_zeroes, DigitalWrap::Max);
+
+      result
+    }
+  }
+}
