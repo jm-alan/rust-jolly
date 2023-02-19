@@ -20,10 +20,8 @@ impl BigInt {
       digital_subtract(&self.digits, other, DigitalWrap::Max);
 
     self.digits = difference;
-    self.sign = if diff_sign.is_negative() {
-      diff_sign.negated()
-    } else {
-      diff_sign
+    if diff_sign.is_negative() {
+      self.sign = self.sign.negated()
     };
   }
 
@@ -37,11 +35,17 @@ impl BigInt {
 
   #[inline(always)]
   fn digital_subtract(&self, other: &[u32]) -> Self {
-    let mut result = self.clone();
+    let (digits, diff_sign) =
+      digital_subtract(&self.digits, other, DigitalWrap::Max);
 
-    result.digital_subtract_assign(other);
-
-    result
+    Self {
+      sign: if diff_sign.is_negative() {
+        self.sign.negated()
+      } else {
+        self.sign
+      },
+      digits,
+    }
   }
 
   #[inline(always)]

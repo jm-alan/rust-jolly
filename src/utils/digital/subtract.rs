@@ -102,13 +102,10 @@ fn wrapping_subtract<I>(lhs: I, rhs: I, base: DigitalWrap) -> I
 where
   I: Integer + Unsigned + Bounded + FromPrimitive + Copy + Debug,
 {
-  let option_wrap: Option<I> = base.into();
-  let Some(wrap_point) = option_wrap else {
-    panic!("Failed to create digital wrap point from supplied base");
-  };
+  let wrap: Option<I> = base.into();
 
   if rhs > lhs {
-    wrap_point - (rhs - lhs - I::one())
+    wrap.unwrap() - (rhs - lhs - I::one())
   } else {
     lhs - rhs
   }
