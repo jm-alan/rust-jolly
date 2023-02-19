@@ -1,20 +1,26 @@
+use std::time::Instant;
+
 use crate::{
   bigint::BigInt,
   utils::{
-    digital_add, digital_add_in_place, digital_scalar_divide_in_place_u32,
-    digital_subtract, DigitalWrap, Sign,
+    digital_add, digital_add_in_place, digital_multiply_u32,
+    digital_scalar_divide_in_place_u32, digital_subtract, karatsuba_mul,
+    DigitalWrap, Sign,
   },
 };
 
 #[test]
 fn test_display() {
   let mut num = BigInt::zero();
+  let hundo = BigInt::from(10000u64);
+  let hundo_facto = hundo.fact();
 
   for _ in 0..65536 {
     num += u32::MAX;
   }
 
-  println!("{num}");
+  println!("\n4294967295 * 65536 = {num}\n");
+  println!("100! = {hundo_facto}\n");
 }
 
 #[test]
@@ -149,21 +155,23 @@ fn test_bigint_scalar_multiply() {
 
 #[test]
 fn test_digital_scalar_multiply() {
-  let mut some_bigint = BigInt::zero();
-  some_bigint.digits = vec![u32::MAX / 5];
+  let mut some_bigint = BigInt::from(u32::MAX / 5);
 
   some_bigint *= 11u32;
-  println!("{some_bigint}");
-  println!("{:?}", some_bigint.digits);
+  assert_eq!(format!("{some_bigint}"), "9448928049");
 }
 
 #[test]
 fn test_bigint_bigint_multiply() {
-  let mut num_one = BigInt::zero();
-  let mut num_two = BigInt::zero();
+  let num_one = BigInt {
+    sign: Sign::Positive,
+    digits: vec![65536, 65536],
+  };
 
-  num_one.digits = vec![20, 20];
-  num_two.digits = vec![30, 30, 30];
+  let num_two = BigInt {
+    sign: Sign::Positive,
+    digits: vec![65536, 65536],
+  };
 
   let num_three = &num_one * &num_two;
 
@@ -185,4 +193,32 @@ fn test_division() {
   digital_scalar_divide_in_place_u32(&mut some_more_digits, 20);
   println!("{:?}", some_digits);
   println!("{:?}", some_more_digits);
+}
+
+#[test]
+fn test_karatsuba_multiplication() {
+  let digits = 10000;
+  let digit = u32::MAX / 2;
+  let crossover = 60;
+
+  let test_vec = vec![digit; digits];
+
+  let some_digits = test_vec.clone();
+  let some_other_digits = test_vec.clone();
+
+  let mut timer = Instant::now();
+  let result = karatsuba_mul(&some_digits, &some_other_digits, crossover);
+  let k_time = timer.elapsed();
+
+  timer = Instant::now();
+  let digital_result = digital_multiply_u32(&some_digits, &some_other_digits);
+  let reg_time = timer.elapsed();
+
+  assert_eq!(result, digital_result);
+  println!(
+    "Karatsuba took {:?}\n\
+    Tranditional mult took {:?}\n\
+    with a crossover of {crossover} multiplying {digits} digits of {digit}",
+    k_time, reg_time
+  );
 }
