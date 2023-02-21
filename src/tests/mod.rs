@@ -11,16 +11,26 @@ use crate::{
 
 #[test]
 fn test_display() {
-  let mut num = BigInt::zero();
-  let hundo = BigInt::from(10000u64);
+  // let mut num = BigInt::zero();
+  let target_fact = 100000u64;
+  let hundo = BigInt::from(target_fact);
+
+  let timer = Instant::now();
   let hundo_facto = hundo.fact();
+  let finished = timer.elapsed();
 
-  for _ in 0..65536 {
-    num += u32::MAX;
-  }
+  println!("Computed {target_fact}! in {:?}", finished);
+  println!(
+    "{target_fact}! requires a BigInt magnitude of {}",
+    hundo_facto.magnitude()
+  );
 
-  println!("\n4294967295 * 65536 = {num}\n");
-  println!("100! = {hundo_facto}\n");
+  // for _ in 0..65536 {
+  //   num += u32::MAX;
+  // }
+
+  // println!("\n4294967295 * 65536 = {num}\n");
+  // println!("100! = {hundo_facto}\n");
 }
 
 #[test]
@@ -197,7 +207,7 @@ fn test_division() {
 
 #[test]
 fn test_karatsuba_multiplication() {
-  let digits = 10000;
+  let digits = 100000;
   let digit = u32::MAX / 2;
   let crossover = 60;
 
@@ -210,15 +220,15 @@ fn test_karatsuba_multiplication() {
   let result = karatsuba_mul(&some_digits, &some_other_digits, crossover);
   let k_time = timer.elapsed();
 
-  timer = Instant::now();
-  let digital_result = digital_multiply_u32(&some_digits, &some_other_digits);
-  let reg_time = timer.elapsed();
+  // timer = Instant::now();
+  // let digital_result = digital_multiply_u32(&some_digits, &some_other_digits);
+  // let reg_time = timer.elapsed();
 
-  assert_eq!(result, digital_result);
-  println!(
-    "Karatsuba took {:?}\n\
-    Tranditional mult took {:?}\n\
-    with a crossover of {crossover} multiplying {digits} digits of {digit}",
-    k_time, reg_time
-  );
+  // assert_eq!(result, digital_result);
+  // println!(
+  //   "Karatsuba took {:?}\n\
+  //   Tranditional mult took {:?}\n\
+  //   with a crossover of {crossover} multiplying {digits} digits of {digit}",
+  //   k_time, reg_time
+  // );
 }

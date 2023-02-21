@@ -13,27 +13,41 @@ pub fn digital_subtract<I>(
 where
   I: Integer + Unsigned + Bounded + FromPrimitive + Copy + Debug,
 {
-  let mut larger = lhs;
-  let mut smaller = rhs;
-  let mut sign = Sign::Positive;
+  // println!("Performing {:?} - {:?}", lhs, rhs);
+  let left_zero = lhs.iter().all(|v| v == &I::zero());
+  let right_zero = rhs.iter().all(|v| v == &I::zero());
+  match (left_zero, right_zero) {
+    (true, true) => (vec![I::zero()], Sign::Zero),
+    (true, _) => (rhs.to_vec(), Sign::Positive),
+    (_, true) => (lhs.to_vec(), Sign::Positive),
+    _ => {
+      let mut larger = lhs;
+      let mut smaller = rhs;
+      let mut sign = Sign::Positive;
 
-  match digital_cmp(lhs, rhs) {
-    Ordering::Equal => return (vec![I::zero()], Sign::Zero),
-    Ordering::Less => {
-      larger = rhs;
-      smaller = lhs;
-      sign = Sign::Negative;
+      match digital_cmp(lhs, rhs) {
+        Ordering::Equal => return (vec![I::zero()], Sign::Zero),
+        Ordering::Less => {
+          larger = rhs;
+          smaller = lhs;
+          sign = Sign::Negative;
+        }
+        _ => {}
+      }
+
+      let mut trimmed_larger = ignore_leading_zeroes(larger);
+      let mut trimmed_smaller = ignore_leading_zeroes(smaller);
+
+      (
+        digital_iterator_subtract(
+          &mut trimmed_larger,
+          &mut trimmed_smaller,
+          base,
+        ),
+        sign,
+      )
     }
-    _ => {}
   }
-
-  let mut trimmed_larger = ignore_leading_zeroes(larger);
-  let mut trimmed_smaller = ignore_leading_zeroes(smaller);
-
-  (
-    digital_iterator_subtract(&mut trimmed_larger, &mut trimmed_smaller, base),
-    sign,
-  )
 }
 
 #[inline(always)]
@@ -90,11 +104,15 @@ fn ignore_leading_zeroes<I>(digits: &[I]) -> Take<slice::Iter<'_, I>>
 where
   I: Integer + Copy + Debug,
 {
-  let mut end_idx = digits.len() - 1;
-  while digits[end_idx] == I::zero() {
-    end_idx -= 1;
+  if digits.len() == 1 {
+    digits.iter().take(1)
+  } else {
+    let mut end_idx = digits.len() - 1;
+    while digits[end_idx] == I::zero() {
+      end_idx -= 1;
+    }
+    digits.iter().take(end_idx + 1)
   }
-  digits.iter().take(end_idx + 1)
 }
 
 #[inline(always)]

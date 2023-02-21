@@ -21,7 +21,9 @@ impl BigInt {
 
     self.digits = difference;
     if diff_sign.is_negative() {
-      self.sign = self.sign.negated()
+      self.sign = self.sign.negated();
+    } else if diff_sign.is_zero() {
+      self.sign = Sign::Zero;
     };
   }
 
@@ -39,10 +41,10 @@ impl BigInt {
       digital_subtract(&self.digits, other, DigitalWrap::Max);
 
     Self {
-      sign: if diff_sign.is_negative() {
-        self.sign.negated()
-      } else {
-        self.sign
+      sign: match diff_sign {
+        Sign::Negative => self.sign.negated(),
+        Sign::Zero => Sign::Zero,
+        _ => self.sign,
       },
       digits,
     }

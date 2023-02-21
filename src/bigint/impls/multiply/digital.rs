@@ -1,6 +1,9 @@
 use std::ops::{Mul, MulAssign};
 
-use crate::{bigint::BigInt, utils::digital_multiply_u32};
+use crate::{
+  bigint::BigInt,
+  utils::{digital_multiply_u32, karatsuba_mul},
+};
 
 impl Mul for &BigInt {
   type Output = BigInt;
@@ -22,7 +25,13 @@ impl MulAssign<&BigInt> for BigInt {
       return self.zero_out();
     }
 
-    self.digits = digital_multiply_u32(&self.digits, &rhs.digits);
+    self.digits = if self.magnitude() > Self::karatsuba_crossover()
+      && rhs.magnitude() > Self::karatsuba_crossover()
+    {
+      karatsuba_mul(&self.digits, &rhs.digits, Self::karatsuba_crossover())
+    } else {
+      digital_multiply_u32(&self.digits, &rhs.digits)
+    };
 
     if rhs.sign.is_negative() {
       self.sign = self.sign.negated();
