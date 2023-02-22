@@ -15,22 +15,21 @@ pub fn digital_multiply_u32_into_fixed_width(
   let mut result = [0; 65536];
 
   match (lhs.len(), rhs.len()) {
-    (0, _) => {
-      result.copy_from_slice(lhs);
-      result
-    }
-    (_, 0) => {
-      result.copy_from_slice(rhs);
-      result
-    }
+    (0, _) => result.copy_from_slice(lhs),
+    (_, 0) => result.copy_from_slice(rhs),
     (1, 1) => {
       let high_res = higher_order_multiply(lhs[0], rhs[0]);
       result[0] = high_res as u32;
       result[1] = (high_res >> 32) as u32;
-      result
     }
-    (1, _) => digital_scalar_multiply_out_of_place_u32_fixed_width(rhs, lhs[0]),
-    (_, 1) => digital_scalar_multiply_out_of_place_u32_fixed_width(lhs, rhs[0]),
+    (1, _) => {
+      result.copy_from_slice(rhs);
+      digital_scalar_multiply_in_place_u32_fixed_width(&mut result, lhs[0]);
+    }
+    (_, 1) => {
+      result.copy_from_slice(lhs);
+      digital_scalar_multiply_in_place_u32_fixed_width(&mut result, rhs[0]);
+    }
     (left_magnitude, _) => {
       let mut scaled_mult = [0; 65536];
 
@@ -51,10 +50,9 @@ pub fn digital_multiply_u32_into_fixed_width(
           DigitalWrap::Max,
         );
       }
-
-      result
     }
-  }
+  };
+  result
 }
 
 #[inline(always)]
