@@ -31,14 +31,11 @@ pub fn digital_multiply_u32_into_fixed_width(
     }
     (1, _) => digital_scalar_multiply_out_of_place_u32_fixed_width(rhs, lhs[0]),
     (_, 1) => digital_scalar_multiply_out_of_place_u32_fixed_width(lhs, rhs[0]),
-    (left_magnitude, right_magnitude) => {
-      let result_magnitude = left_magnitude + right_magnitude;
-
-      let standing_zeroes = vec![0; result_magnitude];
+    (left_magnitude, _) => {
       let mut scaled_mult = [0; 65536];
 
       for (idx, digit) in rhs.iter().enumerate() {
-        scaled_mult.copy_from_slice(&standing_zeroes);
+        scaled_mult[0..65536].fill(0);
 
         scaled_mult[idx..(idx + left_magnitude)]
           .copy_from_slice(&lhs[0..left_magnitude]);
