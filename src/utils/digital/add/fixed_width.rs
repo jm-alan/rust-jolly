@@ -35,7 +35,7 @@ where
   while current_idx < left_magnitude && current_idx < right_magnitude {
     let current_left = lhs[current_idx];
     let current_right = rhs[current_idx];
-    let current_carry = I::from_u8(carry as u8).unwrap();
+    let current_carry = if carry { I::one() } else { I::zero() };
     let before_carry = wrapping_add(current_left, current_right, base);
     let after_carry = wrapping_add(before_carry, current_carry, base);
     carry = before_carry < current_left || after_carry < before_carry;
@@ -55,7 +55,7 @@ where
 
   while current_idx < remainder_magnitude {
     let current_left = remainder[current_idx];
-    let current_carry = I::from_u8(carry as u8).unwrap();
+    let current_carry = if carry { I::one() } else { I::zero() };
     let after_carry = wrapping_add(current_left, current_carry, base);
 
     carry = after_carry < current_left;
@@ -96,7 +96,7 @@ pub fn digital_add_in_place_fixed_width<I>(
   while current_idx < 65536 && current_idx < right_magnitude {
     let current_left = lhs[current_idx];
     let current_right = rhs[current_idx];
-    let current_carry = I::from_u8(carry as u8).unwrap();
+    let current_carry = if carry { I::one() } else { I::zero() };
     let before_carry = wrapping_add(current_left, current_right, base);
     let after_carry = wrapping_add(before_carry, current_carry, base);
     carry = before_carry < current_left || after_carry < before_carry;
@@ -108,7 +108,7 @@ pub fn digital_add_in_place_fixed_width<I>(
 
   while current_idx < right_magnitude {
     let current_left = rhs[current_idx];
-    let current_carry = I::from_u8(carry as u8).unwrap();
+    let current_carry = if carry { I::one() } else { I::zero() };
     let after_carry = wrapping_add(current_left, current_carry, base);
 
     carry = after_carry < current_left;
@@ -120,7 +120,7 @@ pub fn digital_add_in_place_fixed_width<I>(
 
   while carry {
     let current_left = lhs[current_idx];
-    let current_carry = I::from_u8(carry as u8).unwrap();
+    let current_carry = if carry { I::one() } else { I::zero() };
     let after_carry = wrapping_add(current_left, current_carry, base);
 
     carry = after_carry < current_left;
