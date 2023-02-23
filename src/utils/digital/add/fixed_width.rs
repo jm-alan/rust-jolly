@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use num::{Bounded, FromPrimitive, Integer, Unsigned};
 
 use super::wrapping_add;
-use crate::utils::DigitalWrap;
+use crate::{traits::from_bool::FromBool, utils::DigitalWrap};
 
 #[inline(always)]
 pub fn digital_add_fixed_width<I>(
@@ -12,7 +12,7 @@ pub fn digital_add_fixed_width<I>(
   base: DigitalWrap,
 ) -> [I; 65536]
 where
-  I: Integer + Unsigned + Bounded + FromPrimitive + Copy + Debug,
+  I: Integer + Unsigned + Bounded + FromPrimitive + FromBool + Copy + Debug,
 {
   let mut result = [I::zero(); 65536];
 
@@ -35,7 +35,7 @@ where
   while current_idx < left_magnitude && current_idx < right_magnitude {
     let current_left = lhs[current_idx];
     let current_right = rhs[current_idx];
-    let current_carry = if carry { I::one() } else { I::zero() };
+    let current_carry = I::from_bool(carry);
     let before_carry = wrapping_add(current_left, current_right, base);
     let after_carry = wrapping_add(before_carry, current_carry, base);
     carry = before_carry < current_left || after_carry < before_carry;
@@ -55,7 +55,7 @@ where
 
   while current_idx < remainder_magnitude {
     let current_left = remainder[current_idx];
-    let current_carry = if carry { I::one() } else { I::zero() };
+    let current_carry = I::from_bool(carry);
     let after_carry = wrapping_add(current_left, current_carry, base);
 
     carry = after_carry < current_left;
@@ -78,7 +78,7 @@ pub fn digital_add_in_place_fixed_width<I>(
   rhs: &[I],
   base: DigitalWrap,
 ) where
-  I: Integer + Unsigned + Bounded + FromPrimitive + Copy + Debug,
+  I: Integer + Unsigned + Bounded + FromPrimitive + FromBool + Copy + Debug,
 {
   if lhs.iter().all(|el| el == &I::zero()) {
     lhs.copy_from_slice(rhs);
@@ -96,7 +96,7 @@ pub fn digital_add_in_place_fixed_width<I>(
   while current_idx < 65536 && current_idx < right_magnitude {
     let current_left = lhs[current_idx];
     let current_right = rhs[current_idx];
-    let current_carry = if carry { I::one() } else { I::zero() };
+    let current_carry = I::from_bool(carry);
     let before_carry = wrapping_add(current_left, current_right, base);
     let after_carry = wrapping_add(before_carry, current_carry, base);
     carry = before_carry < current_left || after_carry < before_carry;
@@ -108,7 +108,7 @@ pub fn digital_add_in_place_fixed_width<I>(
 
   while current_idx < right_magnitude {
     let current_left = rhs[current_idx];
-    let current_carry = if carry { I::one() } else { I::zero() };
+    let current_carry = I::from_bool(carry);
     let after_carry = wrapping_add(current_left, current_carry, base);
 
     carry = after_carry < current_left;
@@ -120,7 +120,7 @@ pub fn digital_add_in_place_fixed_width<I>(
 
   while carry {
     let current_left = lhs[current_idx];
-    let current_carry = if carry { I::one() } else { I::zero() };
+    let current_carry = I::from_bool(carry);
     let after_carry = wrapping_add(current_left, current_carry, base);
 
     carry = after_carry < current_left;

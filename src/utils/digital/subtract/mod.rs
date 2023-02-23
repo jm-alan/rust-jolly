@@ -5,6 +5,7 @@ use num::{Bounded, FromPrimitive, Integer, Unsigned};
 use std::{fmt::Debug, iter::Take, slice};
 
 use super::DigitalWrap;
+use crate::traits::from_bool::FromBool;
 
 pub use fixed_width::*;
 pub use variable_width::*;
@@ -21,6 +22,7 @@ fn digital_iterator_subtract_into_container<'iterator_lifetime, I>(
     + Unsigned
     + Bounded
     + FromPrimitive
+    + FromBool
     + Copy
     + Debug,
 {
@@ -30,11 +32,7 @@ fn digital_iterator_subtract_into_container<'iterator_lifetime, I>(
   loop {
     match (lhs.next(), rhs.next()) {
       (Some(left), Some(right)) => {
-        let after_borrow = wrapping_subtract(
-          *left,
-          if borrow { I::one() } else { I::zero() },
-          base,
-        );
+        let after_borrow = wrapping_subtract(*left, I::from_bool(borrow), base);
         let after_sub = wrapping_subtract(after_borrow, *right, base);
 
         borrow = &after_borrow > left || after_sub > after_borrow;
@@ -43,11 +41,7 @@ fn digital_iterator_subtract_into_container<'iterator_lifetime, I>(
         current_idx += 1;
       }
       (Some(val), None) => {
-        let after_borrow = wrapping_subtract(
-          *val,
-          if borrow { I::one() } else { I::zero() },
-          base,
-        );
+        let after_borrow = wrapping_subtract(*val, I::from_bool(borrow), base);
         result[current_idx] = after_borrow;
         current_idx += 1;
         borrow = &after_borrow > val;

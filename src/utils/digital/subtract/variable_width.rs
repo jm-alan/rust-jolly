@@ -2,7 +2,10 @@ use num::{Bounded, FromPrimitive, Integer, Unsigned};
 use std::{cmp::Ordering, fmt::Debug};
 
 use super::{digital_iterator_subtract_into_container, ignore_leading_zeroes};
-use crate::utils::{digital_cmp, DigitalWrap, Sign};
+use crate::{
+  traits::from_bool::FromBool,
+  utils::{digital_cmp, DigitalWrap, Sign},
+};
 
 #[inline(always)]
 pub fn digital_subtract<I>(
@@ -11,7 +14,7 @@ pub fn digital_subtract<I>(
   base: DigitalWrap,
 ) -> (Vec<I>, Sign)
 where
-  I: Integer + Unsigned + Bounded + FromPrimitive + Copy + Debug,
+  I: Integer + Unsigned + Bounded + FromPrimitive + FromBool + Copy + Debug,
 {
   let left_zero = lhs.iter().all(|v| v.is_zero());
   let right_zero = rhs.iter().all(|v| v.is_zero());
