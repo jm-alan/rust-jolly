@@ -40,6 +40,7 @@ fn digital_iterator_subtract_into_container<'iterator_lifetime, I>(
         borrow = &after_borrow > left || after_sub > after_borrow;
 
         result[current_idx] = after_sub;
+        current_idx += 1;
       }
       (Some(val), None) => {
         let after_borrow = wrapping_subtract(
@@ -48,6 +49,7 @@ fn digital_iterator_subtract_into_container<'iterator_lifetime, I>(
           base,
         );
         result[current_idx] = after_borrow;
+        current_idx += 1;
         borrow = &after_borrow > val;
       }
       (None, Some(_)) => panic!("Impossible procession of subtraction loop"),
