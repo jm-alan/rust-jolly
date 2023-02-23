@@ -13,8 +13,8 @@ pub fn digital_subtract<I>(
 where
   I: Integer + Unsigned + Bounded + FromPrimitive + Copy + Debug,
 {
-  let left_zero = lhs.iter().all(|v| v == &I::zero());
-  let right_zero = rhs.iter().all(|v| v == &I::zero());
+  let left_zero = lhs.iter().all(|v| v.is_zero());
+  let right_zero = rhs.iter().all(|v| v.is_zero());
   match (left_zero, right_zero) {
     (true, true) => (vec![I::zero()], Sign::Zero),
     (true, _) => (rhs.to_vec(), Sign::Positive),
